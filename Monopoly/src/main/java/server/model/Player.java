@@ -9,6 +9,7 @@ public class Player {
     private final String name;
     private int balance;
     private int currentPosition;
+    private int rentIncome;
     private PlayerStatus status;
     private int jailTurns;
     private MyHashTable<Property> ownedProperties;
@@ -26,6 +27,10 @@ public class Player {
         this.ownedProperties = new MyHashTable<>(20);
         this.undoStack = new MyStack();
         this.redoStack = new MyStack();
+    }
+
+    public int getRentIncome(){
+        return rentIncome;
     }
 
     public void addMoney(int amount) {
@@ -120,6 +125,10 @@ public class Player {
 
     public boolean isBankrupt() {
         return status == PlayerStatus.BANKRUPT;
+    }
+
+    public int getOwnedPropertiesCount() {
+        return ownedProperties.size();
     }
 }
 

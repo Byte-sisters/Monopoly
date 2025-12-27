@@ -2,6 +2,7 @@ package server.core;
 
 import server.action.Action;
 import server.datastructure.MyHashTable;
+import server.datastructure.MyHeap;
 import server.datastructure.MyStack;
 import server.model.*;
 
@@ -12,6 +13,10 @@ public class GameState {
     private MyStack redoStack;
     private MyHashTable<Property> properties;
     private MyHashTable<Player> players;
+    private MyHeap<Player> wealthHeap;
+    private MyHeap<Player> rentHeap;
+
+
 
     public GameState() {
         initialize();
@@ -25,10 +30,11 @@ public class GameState {
         redoStack = new MyStack();
         properties = new MyHashTable<>(26);
         players = new MyHashTable<>(4);
+        wealthHeap = new MyHeap<>(4, (a, b) -> a.getBalance() - b.getBalance());
+        rentHeap = new MyHeap<>(4, (a, b) -> a.getRentIncome() - b.getRentIncome());
     }
 
     public void initializeCard() {
-
         cardManager.addCard(new Card(1, CardType.CHANCE,"go to jail", EffectType.GO_TO_JAIL,-1));
         cardManager.addCard(new Card(2,CardType.CHANCE,"move 5 tiles forward", EffectType.MOVE,5));
         cardManager.addCard(new Card(3,CardType.CHANCE,"give 20$ to bank", EffectType.LOSE_MONEY,20));
@@ -70,6 +76,14 @@ public class GameState {
         properties.insert(25, new Property(25,"park place", "navy blue", 350,80));
         properties.insert(26, new Property(26,"boardwalk", "navy blue", 400,85));
 
+    }
+
+    public Player getRichestPlayer() {
+        return wealthHeap.peek();
+    }
+
+    public Player getTopRentEarner() {
+        return rentHeap.peek();
     }
 
     public void executeAction(Action action) {
