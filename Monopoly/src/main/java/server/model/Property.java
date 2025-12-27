@@ -23,4 +23,8 @@ public class Property {
         this.isMortgaged = false;
         this.ownerID = null;
     }
+
+    public int getPropertyID() {
+        return propertyID;
+    }
 }
