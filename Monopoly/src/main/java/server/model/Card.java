@@ -13,6 +13,9 @@ public class Card {
         this.description = desc;
         this.effectType = effectType;
         this.effectValue = value;
+    }
 
+    public CardType getCardType() {
+        return cardType;
     }
 }
