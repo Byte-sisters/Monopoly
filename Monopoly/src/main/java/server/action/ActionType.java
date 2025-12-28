@@ -7,5 +7,6 @@ public enum ActionType {
     TRADE,
     BUILD,
     MORTGAGE,
-    CARD_EFFECT
+    CARD_EFFECT,
+    PAY_TAX
 }

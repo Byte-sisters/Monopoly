@@ -6,8 +6,10 @@ public class Property {
     private String colorGroup;
     private int purchasePrice;
     private int baseRent;
+    private int MortgageValue;
 
     private int houseCount;
+    private BuildingType buildingType;
     private boolean hasHotel;
     private boolean isMortgaged;
     private Integer ownerID;
@@ -17,6 +19,7 @@ public class Property {
         this.name = name;
         this.colorGroup = color;
         this.purchasePrice = price;
+        this.MortgageValue = price * 3 / 4;
         this.baseRent = baseRent;
         this.houseCount = 0;
         this.hasHotel = false;
@@ -26,5 +29,41 @@ public class Property {
 
     public int getPropertyID() {
         return propertyID;
+    }
+
+    public void setOwnerID(Integer newOwner) {
+        this.ownerID = newOwner;
+    }
+
+    public Integer getOwnerID() {
+        return ownerID;
+    }
+
+    public int getHouseCount() {
+        return houseCount;
+    }
+
+    public void setHouseCount(int newHouseCount) {
+        this.houseCount = newHouseCount;
+    }
+
+    public void setBuildingType(BuildingType buildingType) {
+        this.buildingType = buildingType;
+    }
+
+    public void setHasHotel(boolean b) {
+        this.hasHotel = b;
+    }
+
+    public void setMortgaged(boolean b) {
+        this.isMortgaged = b;
+    }
+
+    public int getMortgageValue() {
+        return MortgageValue;
+    }
+
+    public boolean isMortgaged() {
+        return isMortgaged;
     }
 }

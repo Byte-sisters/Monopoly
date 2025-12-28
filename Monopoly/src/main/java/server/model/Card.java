@@ -18,4 +18,8 @@ public class Card {
     public CardType getCardType() {
         return cardType;
     }
+
+    public EffectType getEffectType() {
+        return effectType;
+    }
 }
