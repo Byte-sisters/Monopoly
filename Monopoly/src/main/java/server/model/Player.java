@@ -9,6 +9,7 @@ public class Player {
     private final String name;
     private int balance;
     private int currentPosition;
+    private int rentIncome;
     private PlayerStatus status;
     private int jailTurns;
     private MyHashTable<Property> ownedProperties;
@@ -94,7 +95,7 @@ public class Player {
         return action;
     }
 
-    private void declareBankruptcy() {
+    public void declareBankruptcy() {
         status = PlayerStatus.BANKRUPT;
     }
 
@@ -129,5 +130,10 @@ public class Player {
     public void setBalance(int newBalance) {
         this.balance = newBalance;
     }
+
+    public int getRentIncome() {
+        return rentIncome;
+    }
+
 }
 

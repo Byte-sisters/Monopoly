@@ -3,6 +3,8 @@ package server.model;
 import server.datastructure.MyLinkedList;
 import server.datastructure.MyLinkedList.MoveResult;
 
+import java.util.LinkedList;
+
 public class Board {
     private final MyLinkedList tiles;
     private int totalTiles;
@@ -56,7 +58,7 @@ public class Board {
         tiles.add(new Tile (40,"boardwalk", TileType.PROPERTY, 26));
         totalTiles = tiles.size();
     }
-
+/*
     //maybe it should return MoveResult????
     public void movePlayer(int currentPosition, int steps) {
         Tile startNode = tiles.getTileAtPosition(currentPosition);
@@ -66,7 +68,7 @@ public class Board {
         }
     }
 
-
+*/
 //    public Tile getTileAtPosition(int position) {
 //        MyLinkedList.Node node = getNodeAtPosition(position);
 //        return node != null ? node.getTile() : null;
@@ -98,5 +100,9 @@ public class Board {
 
     public int getStartPosition() {
         return 0;
+    }
+
+    public MyLinkedList getAllTiles() {
+        return tiles;
     }
 }

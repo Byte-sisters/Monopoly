@@ -107,4 +107,15 @@ public class MyLinkedList {
         }
         return current;
     }
+
+    public int getPositionOfTile(Tile tile) {
+        Tile current = head;
+        for (int i = 0; i < size; i++) {
+            if (current == tile) {
+                return i;
+            }
+            current = current.getNextTile();
+        }
+        return -1;
+    }
 }

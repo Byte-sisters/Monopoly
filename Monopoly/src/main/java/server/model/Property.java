@@ -66,4 +66,48 @@ public class Property {
     public boolean isMortgaged() {
         return isMortgaged;
     }
+
+    public String getColorGroup(){
+        return colorGroup;
+    }
+
+    public int getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public int calculateRent(boolean monopolyActive){
+
+        if (isMortgaged){
+            return 0;
+        }
+        int rent = baseRent;
+
+        if (monopolyActive&& houseCount==0 && !hasHotel){
+            return rent*2;
+        }
+
+        if (hasHotel){
+            return rent*6;
+        }
+        switch (houseCount){
+            case 1:
+                return rent*2;
+                case 2:
+                    return rent*3;
+                    case 3:
+                        return rent*4;
+                        case 4:
+                            return rent*5;
+            default:
+                return rent;
+        }
+    }
+    public boolean hasHotel() {
+        return hasHotel;
+    }
+
+//    public BuildingType getBuildingType() {
+//        return buildingType;
+//    }
+
 }

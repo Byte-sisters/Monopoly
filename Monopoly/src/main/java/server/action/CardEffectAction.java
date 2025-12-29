@@ -1,8 +1,7 @@
 package server.action;
 
-import server.model.Player;
-import server.model.Card;
-import server.model.EffectType;
+import server.datastructure.MyHashTable;
+import server.model.*;
 
 public class CardEffectAction extends Action {
 
@@ -10,26 +9,40 @@ public class CardEffectAction extends Action {
 
     private final int previousBalance;
     private final int newBalance;
+
     private final int previousPosition;
     private final int newPosition;
+
     private final boolean wasInJail;
     private final boolean goToJail;
 
-    private final Player[] allPlayers;
-    private final int[] previousBalances;
-    private final int[] newBalances;
+    private final MyHashTable<Player> players;
+    private final MyHashTable<Integer> previousBalances;
+    private final MyHashTable<Integer> newBalances;
 
-    public CardEffectAction(int actionId, Player player, Card card, int prevBalance, int newBalance, int prevPosition, int newPosition, boolean wasInJail, boolean goToJail, Player[] allPlayers, int[] previousBalances, int[] newBalances) {
+    public CardEffectAction(
+            int actionId,
+            Player player,
+            Card card,
+            int previousBalance,
+            int newBalance,
+            int previousPosition,
+            int newPosition,
+            boolean wasInJail,
+            boolean goToJail,
+            MyHashTable<Player> players,
+            MyHashTable<Integer> previousBalances,
+            MyHashTable<Integer> newBalances
+    ) {
         super(actionId, ActionType.CARD_EFFECT, player.getPlayerID(), player);
         this.card = card;
-        this.previousBalance = prevBalance;
+        this.previousBalance = previousBalance;
         this.newBalance = newBalance;
-        this.previousPosition = prevPosition;
+        this.previousPosition = previousPosition;
         this.newPosition = newPosition;
         this.wasInJail = wasInJail;
         this.goToJail = goToJail;
-
-        this.allPlayers = allPlayers;
+        this.players = players;
         this.previousBalances = previousBalances;
         this.newBalances = newBalances;
     }
@@ -39,6 +52,7 @@ public class CardEffectAction extends Action {
         Player player = (Player) affectedEntities;
 
         switch (card.getEffectType()) {
+
             case MOVE:
                 player.setCurrentPosition(newPosition);
                 break;
@@ -49,10 +63,10 @@ public class CardEffectAction extends Action {
                 break;
 
             case PAY_TO_PLAYERS:
-                player.setBalance(newBalance);
-                for (int i = 0; i < allPlayers.length; i++) {
-                    if (allPlayers[i].getPlayerID() != player.getPlayerID()) {
-                        allPlayers[i].setBalance(newBalances[i]);
+                for (int id = 1; id <= players.size(); id++) {
+                    Player p = players.get(id);
+                    if (p != null) {
+                        p.setBalance(newBalances.get(id));
                     }
                 }
                 break;
@@ -74,6 +88,7 @@ public class CardEffectAction extends Action {
         Player player = (Player) affectedEntities;
 
         switch (card.getEffectType()) {
+
             case MOVE:
                 player.setCurrentPosition(previousPosition);
                 break;
@@ -84,10 +99,10 @@ public class CardEffectAction extends Action {
                 break;
 
             case PAY_TO_PLAYERS:
-                player.setBalance(previousBalance);
-                for (int i = 0; i < allPlayers.length; i++) {
-                    if (allPlayers[i].getPlayerID() != player.getPlayerID()) {
-                        allPlayers[i].setBalance(previousBalances[i]);
+                for (int id = 1; id <= players.size(); id++) {
+                    Player p = players.get(id);
+                    if (p != null) {
+                        p.setBalance(previousBalances.get(id));
                     }
                 }
                 break;

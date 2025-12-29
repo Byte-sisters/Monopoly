@@ -22,4 +22,8 @@ public class Card {
     public EffectType getEffectType() {
         return effectType;
     }
+
+    public int getEffectValue() {
+        return effectValue;
+    }
 }

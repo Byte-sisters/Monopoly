@@ -21,7 +21,7 @@ public class BuyAction extends Action {
         this.previousBalance = prevBalance;
         this.newBalance = newBalance;
 
-        this.previousOwner = null;
+        this.previousOwner = property.getOwnerID();
         this.newOwner = buyer.getPlayerID();
     }
 

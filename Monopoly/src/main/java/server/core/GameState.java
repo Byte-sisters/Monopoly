@@ -3,6 +3,7 @@ package server.core;
 import server.action.Action;
 import server.datastructure.MyHashTable;
 import server.datastructure.MyHeap;
+import server.datastructure.MyLinkedList;
 import server.datastructure.MyStack;
 import server.model.*;
 
@@ -110,4 +111,36 @@ public class GameState {
         undoStack.push(action);
     }
 
+    public boolean hasMonopoly(int playerID , String colorGroup){
+
+        for(int i =0 ; i<board.getTotalTiles(); i++){
+            Tile tile= board.getAllTiles().getTileAtPosition(i);
+            if (tile.getType()== TileType.PROPERTY){
+                Property p = (Property) tile.getData();
+
+                if (p.getColorGroup().equals(colorGroup)){
+                    if (p.getOwnerID()== null || p.getOwnerID() == playerID){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public MyHashTable<Player> getPlayers() {
+        return players;
+    }
+
+    public CardManager getCardManager() {
+        return cardManager;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public MyHashTable<Property> getProperties() {
+        return properties;
+    }
 }
