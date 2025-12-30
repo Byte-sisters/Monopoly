@@ -174,7 +174,7 @@ public class TransactionManager {
                 break;
 
             case GO_TO_JAIL:
-                newPosition = 30;
+                newPosition = 10;
                 goToJail = true;
                 break;
 

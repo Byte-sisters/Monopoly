@@ -3,7 +3,6 @@ package server.core;
 import server.action.Action;
 import server.datastructure.MyHashTable;
 import server.datastructure.MyHeap;
-import server.datastructure.MyLinkedList;
 import server.datastructure.MyStack;
 import server.model.*;
 
@@ -16,7 +15,7 @@ public class GameState {
     private MyHashTable<Player> players;
     private MyHeap<Player> wealthHeap;
     private MyHeap<Player> rentHeap;
-
+    private int actionIdCounter;
 
 
     public GameState() {
@@ -26,13 +25,15 @@ public class GameState {
     public void initialize() {
         board = new Board();
         cardManager = new CardManager();
-        initializeCard();
         undoStack = new MyStack();
         redoStack = new MyStack();
         properties = new MyHashTable<>(26);
         players = new MyHashTable<>(4);
         wealthHeap = new MyHeap<>(4, (a, b) -> a.getBalance() - b.getBalance());
         rentHeap = new MyHeap<>(4, (a, b) -> a.getRentIncome() - b.getRentIncome());
+        this.actionIdCounter = 0;
+        initializeCard();
+        initializeProperty();
     }
 
     public void initializeCard() {
@@ -79,6 +80,12 @@ public class GameState {
 
     }
 
+    public void addPlayer(Player player) {
+        players.insert(player.getPlayerID(), player);
+        wealthHeap.insert(player);
+        rentHeap.insert(player);
+    }
+
     public Player getRichestPlayer() {
         return wealthHeap.peek();
     }
@@ -87,10 +94,15 @@ public class GameState {
         return rentHeap.peek();
     }
 
+    public synchronized int nextActionId() {
+        return ++actionIdCounter;
+    }
+
     public void executeAction(Action action) {
         action.redo();
         undoStack.push(action);
         redoStack.clear();
+        updateHeaps();
     }
 
     public void undo() {
@@ -119,13 +131,30 @@ public class GameState {
                 Property p = (Property) tile.getData();
 
                 if (p.getColorGroup().equals(colorGroup)){
-                    if (p.getOwnerID()== null || p.getOwnerID() == playerID){
+                    if (p.getOwnerID()== null || p.getOwnerID() != playerID){
                         return false;
                     }
                 }
             }
         }
         return true;
+    }
+
+//    private boolean playerIdEquals(Integer owner, int pid) {
+//        return owner != null && owner == pid;
+//    }
+
+    private void updateHeaps() {
+        wealthHeap.clear();
+        rentHeap.clear();
+
+        for (int i = 1; i <= players.size(); i++) {
+            Player p = players.get(i);
+            if (p != null && !p.isBankrupt()) {
+                wealthHeap.insert(p);
+                rentHeap.insert(p);
+            }
+        }
     }
 
     public MyHashTable<Player> getPlayers() {

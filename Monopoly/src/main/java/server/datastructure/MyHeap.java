@@ -1,6 +1,6 @@
 package server.datastructure;
+
 import java.util.Comparator;
-import java.util.HashMap;
 
 public class MyHeap<T> {
 
@@ -8,14 +8,10 @@ public class MyHeap<T> {
     private int size;
     private Comparator<T> comparator;
 
-
-    private HashMap<T, Integer> indexMap;
-
     public MyHeap(int capacity, Comparator<T> comparator) {
         this.heap = new Object[capacity];
         this.size = 0;
         this.comparator = comparator;
-        this.indexMap = new HashMap<>();
     }
 
     private int parent(int i) { return (i - 1) / 2; }
@@ -28,18 +24,13 @@ public class MyHeap<T> {
     }
 
     private void swap(int i, int j) {
-        T temp = get(i);
+        Object temp = heap[i];
         heap[i] = heap[j];
         heap[j] = temp;
-
-        indexMap.put(get(i), i);
-        indexMap.put(get(j), j);
     }
-
 
     public void insert(T item) {
         heap[size] = item;
-        indexMap.put(item, size);
         int current = size;
         size++;
 
@@ -50,20 +41,15 @@ public class MyHeap<T> {
         }
     }
 
-
     public T extractMax() {
         if (size == 0) return null;
 
         T max = get(0);
-        indexMap.remove(max);
-
         heap[0] = heap[size - 1];
+        heap[size - 1] = null;
         size--;
 
-        if (size > 0) {
-            indexMap.put(get(0), 0);
-            heapify(0);
-        }
+        heapify(0);
         return max;
     }
 
@@ -85,18 +71,24 @@ public class MyHeap<T> {
     }
 
     public void updateKey(T item) {
-        Integer index = indexMap.get(item);
-        if (index == null) return;
-
+        int index = findIndex(item);
+        if (index == -1) return;
         while (index > 0 &&
                 comparator.compare(get(index), get(parent(index))) > 0) {
             swap(index, parent(index));
             index = parent(index);
         }
-
         heapify(index);
     }
 
+    private int findIndex(T item) {
+        for (int i = 0; i < size; i++) {
+            if (heap[i].equals(item)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public T peek() {
         return size == 0 ? null : get(0);
@@ -104,5 +96,12 @@ public class MyHeap<T> {
 
     public boolean isEmpty() {
         return size == 0;
+    }
+
+    public void clear() {
+        for (int i = 0; i < size; i++) {
+            heap[i] = null;
+        }
+        size = 0;
     }
 }

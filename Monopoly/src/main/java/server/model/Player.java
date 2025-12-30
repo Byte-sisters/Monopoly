@@ -95,6 +95,10 @@ public class Player {
         return action;
     }
 
+    public int getJailTurns() {
+        return jailTurns;
+    }
+
     public void declareBankruptcy() {
         status = PlayerStatus.BANKRUPT;
     }
