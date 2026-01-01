@@ -139,5 +139,8 @@ public class Player {
         return rentIncome;
     }
 
+    public int getOwnedPropertiesCount() {
+        return ownedProperties.size();
+    }
 }
 
