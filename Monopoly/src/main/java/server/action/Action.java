@@ -1,6 +1,5 @@
 package server.action;
 
-import server.model.CardType;
 
 public abstract class Action {
     protected final int actionId;

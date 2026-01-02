@@ -1,6 +1,8 @@
 package server.core;
 
+import server.logic.TransactionManager;
 import server.logic.TurnManager;
+import server.model.Player;
 import server.network.ClientHandler;
 import server.network.Message;
 import server.network.MessageType;
@@ -10,19 +12,17 @@ public class GameServer {
 
     private final ServerSocketManager network;
     private final GameState gameState;
+    private final TransactionManager transactionManager;
     private final TurnManager turnManager;
 
     private int nextPlayerId = 1;
 
-    public GameServer(ServerSocketManager network,
-                      GameState gameState,
-                      TurnManager turnManager) {
-
+    public GameServer(ServerSocketManager network) {
         this.network = network;
-        this.gameState = gameState;
-        this.turnManager = turnManager;
+        this.gameState = new GameState();
+        this.transactionManager = new TransactionManager(gameState);
+        this.turnManager = new TurnManager(gameState, transactionManager);
     }
-
     public synchronized void handleMessage(ClientHandler client, Message msg) {
 
         switch (msg.getType()) {
@@ -39,17 +39,20 @@ public class GameServer {
             ));
         }
     }
-
-    // ---------------- HANDLERS ----------------
-
     private void handleHello(ClientHandler client) {
+        if (gameState.getPlayers().size() >= 4) {
+            client.send(new Message(MessageType.ERROR, "GAME_FULL"));
+            client.close();
+            return;
+        }
+
         int pid = nextPlayerId++;
         client.setPlayerId(pid);
 
-        client.send(new Message(
-                MessageType.WELCOME,
-                "PLAYER_ID=" + pid
-        ));
+        Player player = new Player(pid, "Player" + pid, 1500);
+        gameState.addPlayer(player);
+
+        client.send(new Message(MessageType.WELCOME, "PLAYER_ID=" + pid));
 
         network.broadcast(new Message(
                 MessageType.EVENT_LOG,
@@ -62,6 +65,7 @@ public class GameServer {
         ));
     }
 
+
     private void handleRollDice(ClientHandler client) {
         int pid = client.getPlayerId();
 
@@ -73,7 +77,6 @@ public class GameServer {
             return;
         }
 
-        // بررسی نوبت
         if (turnManager.getCurrentPlayer().getPlayerID() != pid) {
             client.send(new Message(
                     MessageType.ERROR,
@@ -82,10 +85,8 @@ public class GameServer {
             return;
         }
 
-        // اجرای کامل منطق بازی
         turnManager.playTurn();
 
-        // ارسال وضعیت جدید برای همه
         network.broadcast(new Message(
                 MessageType.STATE_UPDATE,
                 gameState.toString()

@@ -172,4 +172,22 @@ public class GameState {
     public MyHashTable<Property> getProperties() {
         return properties;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Players:\n");
+
+        for (int i = 1; i <= players.size(); i++) {
+            Player p = players.get(i);
+            if (p != null) {
+                sb.append("P").append(p.getPlayerID())
+                        .append(" $").append(p.getBalance())
+                        .append(" Pos=").append(p.getCurrentPosition())
+                        .append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
 }

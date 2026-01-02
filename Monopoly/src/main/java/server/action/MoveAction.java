@@ -19,7 +19,6 @@ public class MoveAction extends Action {
         this.previousBalance = prevBalance;
         this.newBalance = newBalance;
     }
-
     @Override
     public void redo() {
         Player player = (Player) affectedEntities;

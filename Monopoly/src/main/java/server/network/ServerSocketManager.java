@@ -38,10 +38,19 @@ public class ServerSocketManager {
             e.printStackTrace();
         }
     }
-
     public void broadcast(Message msg) {
         for (int i = 0; i < clientCount; i++) {
-            clients[i].send(msg);
+            if (clients[i] != null) {
+                try {
+                    clients[i].send(msg);
+                } catch (Exception e) {
+                    clients[i] = null;
+                }
+            }
         }
     }
+
 }
+
+
+

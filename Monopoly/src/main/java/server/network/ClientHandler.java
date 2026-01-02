@@ -35,16 +35,21 @@ public class ClientHandler implements Runnable {
             System.out.println("Client disconnected");
         }
     }
-
     public void send(Message msg) {
         try {
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to send to player " + playerId);
+            close();
         }
     }
 
+    public void close() {
+        try {
+            socket.close();
+        } catch (IOException ignored) {}
+    }
     public int getPlayerId() {
         return playerId;
     }
