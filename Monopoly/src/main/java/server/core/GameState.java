@@ -54,7 +54,7 @@ public class GameState {
         properties.insert(1 ,new Property(1,"mediterranean", "brown", 60,10));
         properties.insert(2,new Property(2,"baltic", "brown", 70,15));
         properties.insert(3, new Property(3,"mehran", "purple", 200,50));
-        properties.insert(4, new Property(4,"mehran", "purple", 200,50));
+        properties.insert(4, new Property(4,"oriental avenue", "brown", 100,50));
         properties.insert(5, new Property(5,"vermont", "blue", 100,20));
         properties.insert(6, new Property(6,"connecticut", "blue", 120,25));
         properties.insert(7, new Property(7,"st.charles", "pink", 140,30));
@@ -74,7 +74,7 @@ public class GameState {
         properties.insert(21, new Property(21,"pacific", "green", 300,70));
         properties.insert(22, new Property(22,"carolina", "green", 300,70));
         properties.insert(23, new Property(23,"pennsylvania", "green", 320,75));
-        properties.insert(24, new Property(24,"ab doogh khiarr", "purple", 200,50));
+        properties.insert(24, new Property(24,"ab doogh khiarr", "navy blue", 200,50));
         properties.insert(25, new Property(25,"park place", "navy blue", 350,80));
         properties.insert(26, new Property(26,"boardwalk", "navy blue", 400,85));
 

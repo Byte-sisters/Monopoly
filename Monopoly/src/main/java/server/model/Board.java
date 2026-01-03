@@ -14,7 +14,6 @@ public class Board {
         this.totalTiles = 0;
         initializeBoard();
     }
-
     private void initializeBoard() {
         tiles.add(new Tile (1,"GO", TileType.GO,null));
         tiles.add(new Tile (2,"mediterranean avenue", TileType.PROPERTY,1));
@@ -36,7 +35,7 @@ public class Board {
         tiles.add(new Tile (18,"community chest", TileType.CARD,CardType.COMMUNITY));
         tiles.add(new Tile (19,"tennessee avenue", TileType.PROPERTY,12));
         tiles.add(new Tile (20,"NYC avenue", TileType.PROPERTY,13));
-        tiles.add(new Tile (21,"north avenue", TileType.CARD, CardType.CHANCE)); //this is not complete
+        tiles.add(new Tile (21,"chance", TileType.CARD, CardType.CHANCE)); //this is not complete
         tiles.add(new Tile (22,"kentucky avenue", TileType.PROPERTY,14));
         tiles.add(new Tile (23,"chance", TileType.CARD, CardType.CHANCE));
         tiles.add(new Tile (24,"indiana avenue", TileType.PROPERTY,15));
@@ -57,7 +56,7 @@ public class Board {
         tiles.add(new Tile (39,"income tax", TileType.TAX, 100));
         tiles.add(new Tile (40,"boardwalk", TileType.PROPERTY, 26));
         totalTiles = tiles.size();
-    }
+    }/////
 /*
     //maybe it should return MoveResult????
     public void movePlayer(int currentPosition, int steps) {
