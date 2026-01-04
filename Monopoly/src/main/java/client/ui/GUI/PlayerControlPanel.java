@@ -228,6 +228,34 @@ public class PlayerControlPanel extends JPanel {
             rollDiceBtn.setEnabled(false);
         }
     }
+    public void setJailState(
+            boolean inJail,
+            boolean hasJailCard,
+            int jailTurnsLeft
+    ) {
+        if (inJail) {
+            rollDiceBtn.setEnabled(false);
+            buyPropertyBtn.setEnabled(false);
+            buildHouseBtn.setEnabled(false);
+            buildHotelBtn.setEnabled(false);
+            proposeDealBtn.setEnabled(false);
+
+            tryDoubleBtn.setEnabled(true);
+            payJailFineBtn.setEnabled(true);
+            useJailCardBtn.setEnabled(hasJailCard);
+
+            payJailFineBtn.setText("💸 Pay Fine");
+            tryDoubleBtn.setText("🎲 Try Double");
+            useJailCardBtn.setText("🎫 Use Jail Card");
+
+        } else {
+            rollDiceBtn.setEnabled(true);
+            tryDoubleBtn.setEnabled(false);
+            payJailFineBtn.setEnabled(false);
+            useJailCardBtn.setEnabled(false);
+        }
+    }
+
 
     public JButton getRollDiceBtn() { return rollDiceBtn; }
     public JButton getEndTurnBtn() { return endTurnBtn; }

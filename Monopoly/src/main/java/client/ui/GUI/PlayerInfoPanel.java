@@ -38,10 +38,10 @@ public class PlayerInfoPanel extends JPanel {
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        balanceLabel = new JLabel("💰: 0");
-        statusLabel = new JLabel("🎭: -");
-        positionLabel = new JLabel("📍: 0");
-        assetsCountLabel = new JLabel("🏠: 0");
+        balanceLabel = new JLabel("BALANCE: 0");
+        statusLabel = new JLabel("STATUS: -");
+        positionLabel = new JLabel("POSITION: 0");
+        assetsCountLabel = new JLabel("ASSETS: 0");
 
         Font font = new Font("Tahoma", Font.PLAIN, 11);
         balanceLabel.setFont(font);
