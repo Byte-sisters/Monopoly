@@ -10,7 +10,8 @@ public class MainGameWindow extends JFrame {
     public MainGameWindow(
             BoardPanel boardPanel,
             PlayerControlPanel controlPanel,
-            PlayersDisplayPanel playersPanel
+            PlayersDisplayPanel playersPanel,
+            GameReportPanel reportPanel
     ) {
         setTitle("Monopoly");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,26 +23,29 @@ public class MainGameWindow extends JFrame {
         add(boardPanel, BorderLayout.CENTER);
         add(controlPanel, BorderLayout.EAST);
         add(playersPanel, BorderLayout.WEST);
+        add(reportPanel, BorderLayout.SOUTH);
     }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            server.core.GameState gameState = new server.core.GameState();
 
-            Board board = new Board();
-
-            BoardPanel boardPanel = new BoardPanel(board);
-
-            PlayerControlPanel controlPanel =
-                    new PlayerControlPanel(e ->
-                            System.out.println("Clicked: " + e.getActionCommand())
-                    );
-
+            BoardPanel boardPanel = new BoardPanel(gameState.getBoard());
             PlayersDisplayPanel playersPanel = new PlayersDisplayPanel();
+            GameReportPanel reportPanel = new GameReportPanel();
 
-            MainGameWindow window =
-                    new MainGameWindow(boardPanel, controlPanel, playersPanel);
+            PlayerControlPanel controlPanel = new PlayerControlPanel(e -> {
+                reportPanel.updateReports(gameState);
+            });
+
+            MainGameWindow window = new MainGameWindow(
+                    boardPanel,
+                    controlPanel,
+                    playersPanel,
+                    reportPanel
+            );
 
             window.setVisible(true);
         });
     }
-
 }

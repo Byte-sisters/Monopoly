@@ -19,7 +19,6 @@ public class PlayerControlPanel extends JPanel {
     private JButton mortgageBtn;
     private JButton unmortgageBtn;
 
-    private JButton useJailCardBtn;
     private JButton payJailFineBtn;
     private JButton tryDoubleBtn;
 
@@ -51,7 +50,6 @@ public class PlayerControlPanel extends JPanel {
         mortgageBtn = createButton("🏦 Mortgage", "MORTGAGE", new Color(128, 0, 128));
         unmortgageBtn = createButton("💵 Unmortgage", "UNMORTGAGE", new Color(75, 0, 130));
 
-        useJailCardBtn = createButton("🎫 Use Jail Card", "USE_JAIL_CARD", new Color(255, 215, 0));
         payJailFineBtn = createButton("💸 Pay Jail Fine", "PAY_JAIL_FINE", new Color(218, 165, 32));
         tryDoubleBtn = createButton("🎲 Try Double", "TRY_DOUBLE", new Color(255, 140, 0));
 
@@ -139,7 +137,6 @@ public class PlayerControlPanel extends JPanel {
                 new Color(139, 0, 0)
         ));
 
-        jailPanel.add(useJailCardBtn);
         jailPanel.add(payJailFineBtn);
         jailPanel.add(tryDoubleBtn);
 
@@ -166,7 +163,6 @@ public class PlayerControlPanel extends JPanel {
         buildHotelBtn.setEnabled(false);
         mortgageBtn.setEnabled(false);
         unmortgageBtn.setEnabled(false);
-        useJailCardBtn.setEnabled(false);
         payJailFineBtn.setEnabled(false);
         tryDoubleBtn.setEnabled(false);
     }
@@ -201,7 +197,6 @@ public class PlayerControlPanel extends JPanel {
         unmortgageBtn.setEnabled(canUnmortgage);
     }
     public void setJailMode(boolean inJail, boolean hasJailCard, int fineAmount) {
-        useJailCardBtn.setEnabled(inJail && hasJailCard);
         payJailFineBtn.setEnabled(inJail);
         tryDoubleBtn.setEnabled(inJail);
 
@@ -230,7 +225,6 @@ public class PlayerControlPanel extends JPanel {
     }
     public void setJailState(
             boolean inJail,
-            boolean hasJailCard,
             int jailTurnsLeft
     ) {
         if (inJail) {
@@ -242,17 +236,14 @@ public class PlayerControlPanel extends JPanel {
 
             tryDoubleBtn.setEnabled(true);
             payJailFineBtn.setEnabled(true);
-            useJailCardBtn.setEnabled(hasJailCard);
 
             payJailFineBtn.setText("💸 Pay Fine");
             tryDoubleBtn.setText("🎲 Try Double");
-            useJailCardBtn.setText("🎫 Use Jail Card");
 
         } else {
             rollDiceBtn.setEnabled(true);
             tryDoubleBtn.setEnabled(false);
             payJailFineBtn.setEnabled(false);
-            useJailCardBtn.setEnabled(false);
         }
     }
 
@@ -267,7 +258,6 @@ public class PlayerControlPanel extends JPanel {
     public JButton getBuildHotelBtn() { return buildHotelBtn; }
     public JButton getMortgageBtn() { return mortgageBtn; }
     public JButton getUnmortgageBtn() { return unmortgageBtn; }
-    public JButton getUseJailCardBtn() { return useJailCardBtn; }
     public JButton getPayJailFineBtn() { return payJailFineBtn; }
     public JButton getTryDoubleBtn() { return tryDoubleBtn; }
     public JButton getUndoBtn() { return undoBtn; }

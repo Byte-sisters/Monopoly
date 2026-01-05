@@ -94,6 +94,19 @@ public class GameState {
         return rentHeap.peek();
     }
 
+    public Player getRichestPlayerSafe() {
+        Player p = wealthHeap.peek();
+        if (p == null || p.isBankrupt()) return null;
+        return p;
+    }
+
+    public Player getTopRentEarnerSafe() {
+        Player p = rentHeap.peek();
+        if (p == null || p.isBankrupt()) return null;
+        return p;
+    }
+
+
     public synchronized int nextActionId() {
         return ++actionIdCounter;
     }
@@ -112,6 +125,7 @@ public class GameState {
         Action action = undoStack.pop();
         action.undo();
         redoStack.push(action);
+        updateHeaps();
     }
 
     public void redo() {
@@ -121,6 +135,7 @@ public class GameState {
         Action action = redoStack.pop();
         action.redo();
         undoStack.push(action);
+        updateHeaps();
     }
 
     public boolean hasMonopoly(int playerID , String colorGroup){
