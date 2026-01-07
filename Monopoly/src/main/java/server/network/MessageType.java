@@ -6,19 +6,8 @@ public enum MessageType {
     WELCOME,
     ERROR,
 
-    TURN_START,
-    TURN_END,
-
     ROLL_DICE,
-    END_TURN,
-
     BUY_PROPERTY,
-    PAY_RENT,
-
-    PROPOSE_TRADE,
-    ACCEPT_TRADE,
-    REJECT_TRADE,
-
     BUILD,
     MORTGAGE,
     UNMORTGAGE,
@@ -26,11 +15,17 @@ public enum MessageType {
     JAIL_PAY_FINE,
     JAIL_TRY_DOUBLE,
 
+    PROPOSE_TRADE,
+    ACCEPT_TRADE,
+    REJECT_TRADE,
+
+    END_TURN,
     UNDO,
     REDO,
 
     STATE_UPDATE,
     EVENT_LOG,
-
+    TURN_INFO,
+    REPORT_UPDATE,
     GAME_OVER
 }

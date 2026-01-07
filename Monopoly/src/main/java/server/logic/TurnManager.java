@@ -39,7 +39,6 @@ public class TurnManager {
     }
 
     public void playTurn() {
-        int diceValue = dice.roll();
         Player player = getCurrentPlayer();
 
         if (player.isBankrupt()) {
@@ -48,17 +47,11 @@ public class TurnManager {
         }
 
         if (player.getStatus() == PlayerStatus.IN_JAIL) {
-            handleJail(player);
-            nextTurn();
+            handleJailAuto(player);
             return;
         }
-
-        transactionManager.applyMove(
-                gameState.nextActionId(),
-                player,
-                diceValue
-        );
-
+        int diceValue = dice.roll();
+        transactionManager.applyMove(gameState.nextActionId(), player, diceValue);
         handleLanding(player);
         nextTurn();
     }
@@ -111,52 +104,37 @@ public class TurnManager {
         }
     }
 
-    private void handleJail(Player player) {
+
+    private void handleJailAuto(Player player) {
         player.incrementJailTurn();
-        int jailTurns = player.getJailTurns();
-
-        if (jailTurns > 3) {
-            player.releaseFromJail();
-            return;
+        if (player.getJailTurns() > 3) {
+            applyJailPaymentLogic(player);
         }
-        int diceValue = dice.roll();
+    }
 
+    public void applyJailPaymentLogic(Player player) {
+        if (player.getBalance() >= 50) {
+            Tax jailFine = new Tax(50);
+            transactionManager.applyPayTax(gameState.nextActionId(), player, jailFine);
+            player.releaseFromJail();
+
+            int diceValue = dice.roll();
+            transactionManager.applyMove(gameState.nextActionId(), player, diceValue);
+            handleLanding(player);
+            nextTurn();
+        }
+    }
+
+    public void applyJailDoubleLogic(Player player) {
+        int diceValue = dice.roll();
         if (dice.isDouble()) {
             player.releaseFromJail();
-            transactionManager.applyMove(
-                    gameState.nextActionId(),
-                    player,
-                    diceValue
-            );
-            handleLanding(player);
-            return;
-        }
-
-        boolean wantsToPay = wantsToPayFine(player);
-
-        if (wantsToPay && player.getBalance() >= 50) {
-            Tax jailFine = new Tax(50);
-            transactionManager.applyPayTax(
-                    gameState.nextActionId(),
-                    player,
-                    jailFine
-            );
-            player.releaseFromJail();
-            transactionManager.applyMove(
-                    gameState.nextActionId(),
-                    player,
-                    diceValue
-            );
+            transactionManager.applyMove(gameState.nextActionId(), player, diceValue);
             handleLanding(player);
         }
+        nextTurn();
     }
-
-    //this is not complete it should combine with UI
-    private boolean wantsToPayFine(Player player) {
-        return true;
-    }
-
-    private void nextTurn() {
+    public void nextTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % turnOrder.length;
     }
 

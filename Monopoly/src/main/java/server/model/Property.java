@@ -106,6 +106,10 @@ public class Property {
         return hasHotel;
     }
 
+    public String getName() {
+        return name;
+    }
+
 //    public BuildingType getBuildingType() {
 //        return buildingType;
 //    }

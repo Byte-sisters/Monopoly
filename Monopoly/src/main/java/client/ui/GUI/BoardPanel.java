@@ -128,5 +128,21 @@ public class BoardPanel extends JPanel {
 
             System.out.println("Board UI initialized successfully.");
         }
+    public void clearAllTokens() {
+        for (SquareTile tile : guiTiles) {
+            if (tile != null) {
+                tile.clearTokens();
+            }
+        }
     }
+
+    public void moveToken(int playerId, int position) {
+        int pos = position % 40;
+        if (guiTiles[pos] != null) {
+            guiTiles[pos].addToken(getPlayerColor(playerId));
+        }
+        revalidate();
+        repaint();
+    }
+}
 

@@ -1,8 +1,5 @@
 package client.ui.GUI;
 
-import server.core.GameState;
-import server.model.Player;
-
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -11,16 +8,16 @@ public class GameReportPanel extends JPanel {
 
     private JLabel richestPlayerLabel;
     private JLabel rentKingLabel;
-    private GameState gameState;
 
     public GameReportPanel() {
-        setLayout(new GridLayout(2, 1, 5, 5));
+        setLayout(new GridLayout(1, 2, 20, 0));
         setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(Color.DARK_GRAY),
+                BorderFactory.createLineBorder(new Color(120, 120, 120)),
                 "📊 Game Reports",
                 TitledBorder.CENTER,
                 TitledBorder.TOP,
-                new Font("SansSerif", Font.BOLD, 14)
+                new Font("SansSerif", Font.BOLD, 14),
+                new Color(30, 30, 30)
         ));
         setBackground(new Color(245, 245, 245));
 
@@ -36,47 +33,31 @@ public class GameReportPanel extends JPanel {
     }
 
     private JLabel createReportLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setFont(new Font("SansSerif", Font.BOLD, 13));
+        label.setForeground(new Color(70, 70, 70));
+        label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         return label;
     }
 
-    public void updateReports(GameState gameState) {
-        updateRichestPlayer(gameState);
-        updateTopRentEarner(gameState);
-    }
-
-    private void updateRichestPlayer(GameState gameState) {
-        Player p = gameState.getRichestPlayerSafe();
-
-        if (p != null) {
-            richestPlayerLabel.setText(
-                    String.format("👑 Richest Player: P%d | 💰 $%d",
-                            p.getPlayerID(),
-                            p.getBalance())
-            );
-
+    public void updateRichest(String name, int balance) {
+        SwingUtilities.invokeLater(() -> {
+            richestPlayerLabel.setText(String.format("👑 Richest Player: %s ($%d)", name, balance));
             richestPlayerLabel.setForeground(new Color(0, 102, 0));
-        } else {
-            richestPlayerLabel.setText("👑 Richest Player: No Active Player");
-            richestPlayerLabel.setForeground(Color.GRAY);
-        }
+        });
     }
-    private void updateTopRentEarner(GameState gameState) {
-        Player p = gameState.getTopRentEarnerSafe();
 
-        if (p != null) {
-            rentKingLabel.setText(
-                    String.format("🏠 Top Rent Earner: P%d | 💵 $%d",
-                            p.getPlayerID(),
-                            p.getRentIncome())
-            );
+    public void updateRentKing(String name, int totalRent) {
+        SwingUtilities.invokeLater(() -> {
+            rentKingLabel.setText(String.format("🏠 Top Rent Earner: %s ($%d)", name, totalRent));
             rentKingLabel.setForeground(new Color(0, 51, 153));
-        } else {
-            rentKingLabel.setText("🏠 Top Rent Earner: -");
-            rentKingLabel.setForeground(Color.GRAY);
-        }
+        });
     }
 
+    public void reset() {
+        richestPlayerLabel.setText("👑 Richest Player: -");
+        rentKingLabel.setText("🏠 Top Rent Earner: -");
+        richestPlayerLabel.setForeground(Color.GRAY);
+        rentKingLabel.setForeground(Color.GRAY);
+    }
 }

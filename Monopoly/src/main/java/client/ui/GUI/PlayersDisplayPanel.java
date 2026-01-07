@@ -20,7 +20,7 @@ public class PlayersDisplayPanel extends JPanel {
         };
 
         for (int i = 0; i < 4; i++) {
-            String name = "بازیکن " + (i + 1);
+            String name = "player " + (i + 1);
             players[i] = new PlayerInfoPanel(i, name, colors[i]);
             add(players[i]);
         }

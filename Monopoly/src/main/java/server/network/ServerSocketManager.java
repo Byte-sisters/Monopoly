@@ -28,10 +28,13 @@ public class ServerSocketManager {
                 ClientHandler handler =
                         new ClientHandler(socket, gameServer);
 
-                clients[clientCount] = handler;
-                clientCount++;
+               addClient(handler);
 
-                new Thread(handler).start();
+                Thread clientThread = new Thread(handler);
+                clientThread.setName("ClientHandler-" + clientCount);
+                clientThread.start();
+
+
             }
 
         } catch (Exception e) {
@@ -49,6 +52,11 @@ public class ServerSocketManager {
             }
         }
     }
+    private synchronized void addClient(ClientHandler handler) {
+        clients[clientCount] = handler;
+        clientCount++;
+    }
+
 
 }
 
