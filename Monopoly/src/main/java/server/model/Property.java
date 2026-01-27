@@ -92,12 +92,12 @@ public class Property {
         switch (houseCount){
             case 1:
                 return rent*2;
-                case 2:
-                    return rent*3;
-                    case 3:
-                        return rent*4;
-                        case 4:
-                            return rent*5;
+            case 2:
+                return rent*3;
+            case 3:
+                return rent*4;
+            case 4:
+                return rent*5;
             default:
                 return rent;
         }
@@ -109,9 +109,4 @@ public class Property {
     public String getName() {
         return name;
     }
-
-//    public BuildingType getBuildingType() {
-//        return buildingType;
-//    }
-
 }

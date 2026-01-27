@@ -5,7 +5,7 @@ public class MyHashTable<T> {
     private static class Entry<T> {
         int key;
         T value;
-        Entry<T> next;
+        Entry<T> next=null;
 
         Entry(int key, T value) {
             this.key = key;
@@ -31,7 +31,6 @@ public class MyHashTable<T> {
     public void insert(int key, T value) {
         int index = hash(key);
         Entry<T> head = table[index];
-
         Entry<T> current = head;
         while (current != null) {
             if (current.key == key) {
@@ -50,7 +49,6 @@ public class MyHashTable<T> {
     public T get(int key) {
         int index = hash(key);
         Entry<T> current = table[index];
-
         while (current != null) {
             if (current.key == key) {
                 return current.value;

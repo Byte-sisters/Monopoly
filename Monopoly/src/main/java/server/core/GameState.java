@@ -16,7 +16,18 @@ public class GameState {
     private MyHeap<Player> wealthHeap;
     private MyHeap<Player> rentHeap;
     private int actionIdCounter;
-
+    private int pendingTradePlayerA = -1;
+    private int pendingTradePlayerB = -1;
+    private int pendingTradePropertyA = -1;
+    private Integer pendingTradePropertyB = null;
+    private int pendingTradeAmount = 0;
+    private Integer pendingBuyPlayerId = -1;
+    private Integer pendingBuyPropertyId = -1;
+    private int pendingTradeFrom = -1;
+    private int pendingTradeTo = -1;
+    private boolean[] canBuildHouse;
+    private boolean[] canBuildHotel;
+    private boolean[] mortgaged;
 
     public GameState() {
         initialize();
@@ -34,6 +45,9 @@ public class GameState {
         this.actionIdCounter = 0;
         initializeCard();
         initializeProperty();
+        canBuildHouse = new boolean[properties.size()];
+        canBuildHotel = new boolean[properties.size()];
+        mortgaged = new boolean[properties.size()];
     }
 
     public void initializeCard() {
@@ -106,7 +120,6 @@ public class GameState {
         return p;
     }
 
-
     public synchronized int nextActionId() {
         return ++actionIdCounter;
     }
@@ -143,7 +156,8 @@ public class GameState {
         for(int i =0 ; i<board.getTotalTiles(); i++){
             Tile tile= board.getAllTiles().getTileAtPosition(i);
             if (tile.getType()== TileType.PROPERTY){
-                Property p = (Property) tile.getData();
+                int index = (int) tile.getData();
+                Property p = properties.get(index);
 
                 if (p.getColorGroup().equals(colorGroup)){
                     if (p.getOwnerID()== null || p.getOwnerID() != playerID){
@@ -154,10 +168,6 @@ public class GameState {
         }
         return true;
     }
-
-//    private boolean playerIdEquals(Integer owner, int pid) {
-//        return owner != null && owner == pid;
-//    }
 
     private void updateHeaps() {
         wealthHeap.clear();
@@ -191,18 +201,189 @@ public class GameState {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Players:\n");
 
+        sb.append("PLAYERS\n");
         for (int i = 1; i <= players.size(); i++) {
             Player p = players.get(i);
             if (p != null) {
-                sb.append("P").append(p.getPlayerID())
-                        .append(" $").append(p.getBalance())
-                        .append(" Pos=").append(p.getCurrentPosition())
+                sb.append(p.getPlayerID()).append(",")
+                        .append(p.getName()).append(",")
+                        .append(p.getBalance()).append(",")
+                        .append(p.getCurrentPosition()).append(",")
+                        .append(p.getStatus()).append(",")
+                        .append(p.getPropertiesCount()).append(",")
+                        .append(p.hasRolledThisTurn())
                         .append("\n");
             }
         }
+
+        sb.append("PENDING_BUY\n");
+        if (pendingBuyPlayerId == null)
+            sb.append("NONE\n");
+        else
+            sb.append(pendingBuyPlayerId)
+                    .append(",")
+                    .append(pendingBuyPropertyId)
+                    .append("\n");
+        sb.append("PENDING_TRADE\n");
+        if (pendingTradeFrom == -1)
+            sb.append("NONE\n");
+        else
+            sb.append(pendingTradeFrom)
+                    .append(",")
+                    .append(pendingTradeTo)
+                    .append("\n");
+
+        sb.append("BUILD\n");
+        sb.append("HOUSE:");
+        for (int i = 0; i < properties.size(); i++)
+            if (canBuildHouse[i]) sb.append(i).append(",");
+        sb.append("\n");
+
+        sb.append("HOTEL:");
+        for (int i = 0; i < properties.size(); i++)
+            if (canBuildHotel[i]) sb.append(i).append(",");
+        sb.append("\n");
+
+        sb.append("MORTGAGE\n");
+        for (int i = 0; i < properties.size(); i++) {
+            Property p = properties.get(i);
+            if (p != null && p.getOwnerID() != null) {
+                sb.append(i)
+                        .append(":")
+                        .append(p.getOwnerID())
+                        .append(":")
+                        .append(p.isMortgaged() ? "M" : "U")
+                        .append(",");
+            }
+        }
+        sb.append("\n");
+
         return sb.toString();
     }
 
+
+    public void setPendingBuy(int playerId, int propertyId) {
+        pendingBuyPlayerId = playerId;
+        pendingBuyPropertyId = propertyId;
+    }
+
+    public boolean canBuyProperty(int playerId) {
+        return pendingBuyPlayerId != null &&
+                pendingBuyPlayerId == playerId;
+    }
+
+    public int getPendingBuyPropertyId() {
+        return pendingBuyPropertyId;
+    }
+
+    public void clearPendingBuy() {
+        pendingBuyPlayerId = null;
+        pendingBuyPropertyId = null;
+    }
+
+    public void setPendingTrade(int from, int to) {
+        pendingTradeFrom = from;
+        pendingTradeTo = to;
+    }
+
+    public boolean hasPendingTradeFor(int playerId) {
+        return pendingTradeTo == playerId;
+    }
+
+    public void clearBuildFlags() {
+        for (int i = 0; i < properties.size(); i++) {
+            canBuildHouse[i] = false;
+            canBuildHotel[i] = false;
+        }
+    }
+
+    public void setCanBuildHouse(int propertyId) {
+        canBuildHouse[propertyId] = true;
+    }
+
+    public void setCanBuildHotel(int propertyId) {
+        canBuildHotel[propertyId] = true;
+    }
+
+    public boolean canBuildAnyHouse() {
+        for (int i = 0; i < properties.size(); i++)
+            if (canBuildHouse[i]) return true;
+        return false;
+    }
+
+    public boolean canBuildAnyHotel() {
+        for (int i = 0; i < properties.size(); i++)
+            if (canBuildHotel[i]) return true;
+        return false;
+    }
+
+    // ---------- MORTGAGE ----------
+    public void mortgage(int propertyId) {
+        mortgaged[propertyId] = true;
+    }
+
+    public void unmortgage(int propertyId) {
+        mortgaged[propertyId] = false;
+    }
+
+    public boolean canUnmortgageAny() {
+        for (int i = 0; i < properties.size(); i++)
+            if (mortgaged[i]) return true;
+        return false;
+    }
+
+    public boolean canMortgageAny(int playerId) {
+        for (int i = 0; i < properties.size(); i++) {
+            Property prop = properties.get(i);
+            if (prop != null && prop.getOwnerID() != null
+                    && prop.getOwnerID() == playerId
+                    && !prop.isMortgaged()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canUnmortgageAny(int playerId) {
+        for (int i = 0; i < properties.size(); i++) {
+            Property prop = properties.get(i);
+            if (prop != null && prop.getOwnerID() != null
+                    && prop.getOwnerID() == playerId
+                    && prop.isMortgaged()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public Property getPendingBuildProperty(int playerId) {
+        for (int i = 0; i < properties.size(); i++) {
+            Property p = properties.get(i);
+            if (p.getOwnerID() == playerId && !p.isMortgaged() &&
+                    hasMonopoly(playerId, p.getColorGroup())) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public void setPendingTrade(int playerA, int playerB, int propertyA, Integer propertyB, int amount) {
+        this.pendingTradePlayerA = playerA;
+        this.pendingTradePlayerB = playerB;
+        this.pendingTradePropertyA = propertyA;
+        this.pendingTradePropertyB = propertyB;
+        this.pendingTradeAmount = amount;
+    }
+
+    public int getPendingTradePlayerA() { return pendingTradePlayerA; }
+    public int getPendingTradePlayerB() { return pendingTradePlayerB; }
+    public int getPendingTradePropertyA() { return pendingTradePropertyA; }
+    public Integer getPendingTradePropertyB() { return pendingTradePropertyB; }
+    public int getPendingTradeAmount() { return pendingTradeAmount; }
+
+    public void clearPendingTrade() {
+        pendingTradePlayerA = pendingTradePlayerB = pendingTradePropertyA = -1;
+        pendingTradePropertyB = null;
+        pendingTradeAmount = 0;
+    }
 }

@@ -1,6 +1,7 @@
 package server.logic;
 
 import server.core.GameState;
+import server.datastructure.MyHashTable;
 import server.model.*;
 
 public class TurnManager {
@@ -20,15 +21,10 @@ public class TurnManager {
     }
 
     private void initializeTurnOrder() {
-        int size = gameState.getPlayers().size();
-        turnOrder = new int[size];
-
+        turnOrder = new int[4];
         int idx = 0;
-        for (int i = 1; i <= size; i++) {
-            Player p = gameState.getPlayers().get(i);
-            if (p != null) {
-                turnOrder[idx++] = p.getPlayerID();
-            }
+        for (int i = 1; i <= 4; i++) {
+            turnOrder[idx++] = i;
         }
         currentPlayerIndex = 0;
     }
@@ -46,15 +42,21 @@ public class TurnManager {
             return;
         }
 
-        if (player.getStatus() == PlayerStatus.IN_JAIL) {
-            handleJailAuto(player);
-            return;
+        if (player.getStatus() == PlayerStatus.IN_JAIL &&
+                player.getJailTurns() >= 3) {
+            applyJailPaymentLogic(player);
         }
+
         int diceValue = dice.roll();
-        transactionManager.applyMove(gameState.nextActionId(), player, diceValue);
+        transactionManager.applyMove(
+                gameState.nextActionId(),
+                player,
+                diceValue
+        );
         handleLanding(player);
-        nextTurn();
+        updateBuildAndMortgageState(player);
     }
+
 
     private void handleLanding(Player player) {
         Tile tile = gameState.getBoard()
@@ -62,29 +64,30 @@ public class TurnManager {
                 .getTileAtPosition(player.getCurrentPosition());
 
         switch (tile.getType()) {
-
             case PROPERTY:
-                Property p = (Property) tile.getData();
-                if (p.getOwnerID() == null) {
-                    transactionManager.buyProperty(
-                            gameState.nextActionId(),
-                            player,
-                            p
+                int index = (int) tile.getData();
+                Property property = gameState.getProperties().get(index);
+
+                if (property.getOwnerID() == null) {
+                    gameState.setPendingBuy(
+                            player.getPlayerID(),
+                            property.getPropertyID()
                     );
-                } else {
+                }
+                else if (!property.getOwnerID().equals(player.getPlayerID())) {
                     transactionManager.applyPayRent(
                             gameState.nextActionId(),
                             player.getPlayerID(),
-                            p.getPropertyID()
+                            property.getPropertyID()
                     );
                 }
                 break;
-
             case TAX:
+                Tax tax = new Tax((int)tile.getData());
                 transactionManager.applyPayTax(
                         gameState.nextActionId(),
                         player,
-                        (Tax) tile.getData()
+                        tax
                 );
                 break;
 
@@ -104,36 +107,80 @@ public class TurnManager {
         }
     }
 
-
-    private void handleJailAuto(Player player) {
-        player.incrementJailTurn();
-        if (player.getJailTurns() > 3) {
-            applyJailPaymentLogic(player);
-        }
-    }
-
     public void applyJailPaymentLogic(Player player) {
-        if (player.getBalance() >= 50) {
-            Tax jailFine = new Tax(50);
-            transactionManager.applyPayTax(gameState.nextActionId(), player, jailFine);
-            player.releaseFromJail();
+        if (player.getBalance() < 50) return;
 
-            int diceValue = dice.roll();
-            transactionManager.applyMove(gameState.nextActionId(), player, diceValue);
-            handleLanding(player);
-            nextTurn();
-        }
+        Tax jailFine = new Tax(50);
+        transactionManager.applyPayTax(
+                gameState.nextActionId(),
+                player,
+                jailFine
+        );
+
+        player.releaseFromJail();
+
+        int diceValue = dice.roll();
+        transactionManager.applyMove(
+                gameState.nextActionId(),
+                player,
+                diceValue
+        );
+        handleLanding(player);
+        nextTurn();
     }
 
     public void applyJailDoubleLogic(Player player) {
         int diceValue = dice.roll();
+        player.incrementJailTurn();
+
         if (dice.isDouble()) {
             player.releaseFromJail();
-            transactionManager.applyMove(gameState.nextActionId(), player, diceValue);
+
+            transactionManager.applyMove(
+                    gameState.nextActionId(),
+                    player,
+                    diceValue
+            );
             handleLanding(player);
         }
-        nextTurn();
     }
+
+    private void updateBuildAndMortgageState(Player player) {
+
+        gameState.clearBuildFlags();
+
+        MyHashTable<Property> properties = gameState.getProperties();
+
+        for (int i = 1; i <= properties.size(); i++) {
+            Property p = properties.get(i);
+            if (p == null) continue;
+
+            if (p.getOwnerID() != null &&
+                    p.getOwnerID() == player.getPlayerID()) {
+
+                if (!p.isMortgaged() &&
+                        !p.hasHotel() &&
+                        p.getHouseCount() < 4 &&
+                        gameState.hasMonopoly(player.getPlayerID(), p.getColorGroup())) {
+
+                    gameState.setCanBuildHouse(p.getPropertyID());
+                }
+
+                if (!p.isMortgaged() &&
+                        p.getHouseCount() == 4 &&
+                        !p.hasHotel() &&
+                        gameState.hasMonopoly(player.getPlayerID(), p.getColorGroup())) {
+
+                    gameState.setCanBuildHotel(p.getPropertyID());
+                }
+
+                if (p.isMortgaged()) {
+                    gameState.mortgage(p.getPropertyID());
+                }
+            }
+        }
+    }
+
     public void nextTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % turnOrder.length;
     }

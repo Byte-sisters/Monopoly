@@ -11,11 +11,12 @@ public class PayRentAction extends Action {
 
     private final Integer receiverPrevBalance;
     private final Integer receiverNewBalance;
+    private final int rent;
 
-    public PayRentAction(int actionId, Player payer, Player receiver, int payerPrevBalance, int payerNewBalance, Integer receiverPrevBalance, Integer receiverNewBalance) {
+    public PayRentAction(int actionId, Player payer, Player receiver, int payerPrevBalance, int payerNewBalance, Integer receiverPrevBalance, Integer receiverNewBalance, int rent) {
 
         super(actionId, ActionType.PAY_RENT, payer.getPlayerID(), payer);
-
+        this.rent = rent;
         this.receiver = receiver;
         this.payerPrevBalance = payerPrevBalance;
         this.payerNewBalance = payerNewBalance;
@@ -30,6 +31,7 @@ public class PayRentAction extends Action {
 
         if (receiver != null) {
             receiver.setBalance(receiverNewBalance);
+            receiver.addRentIncome(rent);
         }
     }
 
@@ -40,6 +42,7 @@ public class PayRentAction extends Action {
 
         if (receiver != null) {
             receiver.setBalance(receiverPrevBalance);
+            receiver.subtractRentIncome(rent);
         }
     }
 }

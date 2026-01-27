@@ -43,15 +43,15 @@ public class MyQueue {
     }
 
     public void enqueue(Card card) {
-            Node newNode = new Node(card);
-            if(rear == null){
-                front = newNode;
-                rear = newNode;
-            }else{
-                rear.next = newNode;
-                rear = newNode;
-            }
-            size++;
+        Node newNode = new Node(card);
+        if(rear == null){
+            front = newNode;
+            rear = newNode;
+        }else{
+            rear.next = newNode;
+            rear = newNode;
+        }
+        size++;
     }
 
     public Card peek(){

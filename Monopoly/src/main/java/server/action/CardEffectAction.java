@@ -52,7 +52,6 @@ public class CardEffectAction extends Action {
         Player player = (Player) affectedEntities;
 
         switch (card.getEffectType()) {
-
             case MOVE:
                 player.setCurrentPosition(newPosition);
                 break;
@@ -73,9 +72,7 @@ public class CardEffectAction extends Action {
 
             case GO_TO_JAIL:
                 player.setCurrentPosition(newPosition);
-                if (goToJail) {
-                    player.sendToJail();
-                }
+                player.setStatus(PlayerStatus.IN_JAIL);
                 break;
 
             default:
@@ -88,7 +85,6 @@ public class CardEffectAction extends Action {
         Player player = (Player) affectedEntities;
 
         switch (card.getEffectType()) {
-
             case MOVE:
                 player.setCurrentPosition(previousPosition);
                 break;
@@ -109,13 +105,12 @@ public class CardEffectAction extends Action {
 
             case GO_TO_JAIL:
                 player.setCurrentPosition(previousPosition);
-                if (!wasInJail) {
-                    player.releaseFromJail();
-                }
+                player.setStatus(wasInJail ? PlayerStatus.IN_JAIL : PlayerStatus.ACTIVE);
                 break;
 
             default:
                 break;
         }
     }
+
 }

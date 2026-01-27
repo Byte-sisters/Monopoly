@@ -205,16 +205,22 @@ public class TransactionManager {
         Player player = players.get(playerId);
 
         if (player == null || player.isBankrupt()) {
+            System.out.println("first");
             return false;
         }
 
         if (isMortgaging && property.isMortgaged()) {
+            System.out.println("second");
             return false;
         }
         if (!isMortgaging && !property.isMortgaged()) {
+            System.out.println("third");
             return false;
         }
+        System.out.println("prop id: "+property.getOwnerID());
+        System.out.println("player id: "+playerId);
         if (property.getOwnerID() == null || property.getOwnerID() != playerId) {
+            System.out.println("fourth");
             return false;
         }
 
@@ -294,7 +300,8 @@ public class TransactionManager {
                 payerPrevBalance,
                 payerNewBalance,
                 receiverPrevBalance,
-                receiverNewBalance
+                receiverNewBalance,
+                rent
         );
 
         gameState.executeAction(action);
@@ -329,19 +336,41 @@ public class TransactionManager {
         Player playerA = players.get(playerAId);
         Player playerB = playerBId >= 0 ? players.get(playerBId) : null;
 
-        if (playerA == null || playerA.isBankrupt()) return false;
-        if (playerB != null && playerB.isBankrupt()) return false;
+        if (playerA == null || playerA.isBankrupt()){
+            System.out.println("first");
+            return false;
+        }
+        if (playerB != null && playerB.isBankrupt()){
+            System.out.println("second");
+            return false;
+        }
 
         Property propertyA = properties.get(propertyAId);
         Property propertyB = propertyBId != null ? properties.get(propertyBId) : null;
 
-        if (propertyA == null) return false;
-        if (propertyBId != null && propertyB == null) return false;
+        if (propertyA == null){
+            System.out.println("third");
+            return false;
+        }
+        if (propertyBId != null && propertyB == null){
+            System.out.println("fourth");
+            return false;
+        }
 
-        if (!playerA.ownsProperty(propertyAId)) return false;
-        if (propertyB != null && !playerB.ownsProperty(propertyBId)) return false;
+        System.out.println("prop A id:"+propertyAId+" B id:"+propertyBId);
+        if (!playerA.ownsProperty(propertyAId)){
+            System.out.println("fifth");
+            return false;
+        }
+        if (propertyB != null && !playerB.ownsProperty(propertyBId)){
+            System.out.println("sixth");
+            return false;
+        }
 
-        if (propertyB == null && playerB != null && playerB.getBalance() - amount < 0) return false;
+        if (propertyB == null && playerB != null && playerB.getBalance() - amount < 0){
+            System.out.println("seventh");
+            return false;
+        }
 
         TradeAction action = new TradeAction(actionId, playerA, playerB, propertyA, propertyB, amount);
         gameState.executeAction(action);

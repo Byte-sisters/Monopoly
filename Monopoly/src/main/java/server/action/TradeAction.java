@@ -35,7 +35,6 @@ public class TradeAction extends Action {
     @Override
     public void redo() {
         if (propertyB != null && playerB != null) {
-
             propertyA.setOwnerID(playerB.getPlayerID());
             propertyB.setOwnerID(playerA.getPlayerID());
 
@@ -44,22 +43,23 @@ public class TradeAction extends Action {
 
             playerA.addProperty(propertyB);
             playerB.addProperty(propertyA);
-        } else {
 
+            playerA.setBalance(playerA.getBalance() - amount);
+            playerB.setBalance(playerB.getBalance() + amount);
+
+        } else {
             propertyA.setOwnerID(playerB != null ? playerB.getPlayerID() : null);
             playerA.removeProperty(propertyA.getPropertyID());
 
             if (playerB != null) {
-                playerA.setBalance(prevBalanceA - amount);
-                playerB.setBalance(prevBalanceB + amount);
+                playerA.setBalance(playerA.getBalance() - amount);
+                playerB.setBalance(playerB.getBalance() + amount);
                 playerB.addProperty(propertyA);
             } else {
-
-                playerA.setBalance(prevBalanceA + amount);
+                playerA.setBalance(playerA.getBalance() + amount);
             }
         }
     }
-
     @Override
     public void undo() {
         propertyA.setOwnerID(prevOwnerA);
@@ -71,15 +71,21 @@ public class TradeAction extends Action {
 
             playerA.addProperty(propertyA);
             playerB.addProperty(propertyB);
-        } else {
+
             playerA.setBalance(prevBalanceA);
+            playerB.setBalance(prevBalanceB);
+
+        } else {
             if (playerB != null) {
+                playerA.setBalance(prevBalanceA);
                 playerB.setBalance(prevBalanceB);
                 playerB.removeProperty(propertyA.getPropertyID());
                 playerA.addProperty(propertyA);
             } else {
+                playerA.setBalance(prevBalanceA);
                 playerA.addProperty(propertyA);
             }
         }
     }
+
 }

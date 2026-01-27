@@ -28,14 +28,14 @@ public class ServerSocketManager {
                 ClientHandler handler =
                         new ClientHandler(socket, gameServer);
 
-               addClient(handler);
+                addClient(handler);
 
                 Thread clientThread = new Thread(handler);
                 clientThread.setName("ClientHandler-" + clientCount);
                 clientThread.start();
 
-
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,8 +57,7 @@ public class ServerSocketManager {
         clientCount++;
     }
 
-
+    public ClientHandler[] getClients() {
+        return clients;
+    }
 }
-
-
-

@@ -12,7 +12,4 @@ public class Jail {
     public boolean isInJail(){
         return remainingTurns>0;
     }
-//    public void setFree(){
-//
-//    }
 }

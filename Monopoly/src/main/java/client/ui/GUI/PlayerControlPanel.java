@@ -42,16 +42,16 @@ public class PlayerControlPanel extends JPanel {
         redoBtn = createButton("↪️ Redo", "REDO", Color.CYAN);
 
         buyPropertyBtn = createButton("💰 Buy Property", "BUY_PROPERTY", new Color(34, 139, 34));
-        proposeDealBtn = createButton("🤝 Propose Deal", "PROPOSE_DEAL", new Color(70, 130, 180));
-        acceptDealBtn = createButton("✅ Accept Deal", "ACCEPT_DEAL", new Color(50, 205, 50));
-        rejectDealBtn = createButton("❌ Reject Deal", "REJECT_DEAL", Color.RED);
+        proposeDealBtn = createButton("🤝 Propose Deal", "PROPOSE_TRADE", new Color(70, 130, 180));
+        acceptDealBtn = createButton("✅ Accept Deal", "ACCEPT_TRADE", new Color(50, 205, 50));
+        rejectDealBtn = createButton("❌ Reject Deal", "REJECT_TRADE", Color.RED);
         buildHouseBtn = createButton("🏠 Build House", "BUILD_HOUSE", new Color(210, 105, 30));
         buildHotelBtn = createButton("🏨 Build Hotel", "BUILD_HOTEL", new Color(178, 34, 34));
         mortgageBtn = createButton("🏦 Mortgage", "MORTGAGE", new Color(128, 0, 128));
         unmortgageBtn = createButton("💵 Unmortgage", "UNMORTGAGE", new Color(75, 0, 130));
 
-        payJailFineBtn = createButton("💸 Pay Jail Fine", "PAY_JAIL_FINE", new Color(218, 165, 32));
-        tryDoubleBtn = createButton("🎲 Try Double", "TRY_DOUBLE", new Color(255, 140, 0));
+        payJailFineBtn = createButton("💸 Pay Jail Fine", "JAIL_PAY_FINE", new Color(218, 165, 32));
+        tryDoubleBtn = createButton("🎲 Try Double", "JAIL_TRY_DOUBLE", new Color(255, 140, 0));
 
         rollDiceBtn.setToolTipText("Roll dice to move");
         endTurnBtn.setToolTipText("End your turn");
@@ -173,6 +173,13 @@ public class PlayerControlPanel extends JPanel {
         undoBtn.setEnabled(enable);
         redoBtn.setEnabled(enable);
     }
+
+    public void enableBuyButton(boolean enable) {
+        buyPropertyBtn.setEnabled(enable);
+    }
+
+
+
     public void setBuyPropertyMode(boolean canBuy, int price) {
         buyPropertyBtn.setEnabled(canBuy);
         if (canBuy) {
@@ -262,4 +269,19 @@ public class PlayerControlPanel extends JPanel {
     public JButton getTryDoubleBtn() { return tryDoubleBtn; }
     public JButton getUndoBtn() { return undoBtn; }
     public JButton getRedoBtn() { return redoBtn; }
+
+    public void enableTryDouble(boolean inJail) {
+        tryDoubleBtn.setEnabled(inJail);
+    }
+
+    public void enablePayFine(boolean inJail) {
+        payJailFineBtn.setEnabled(inJail);
+    }
+
+    public void enableRollButton(boolean b) {
+        if(!b) {
+            rollDiceBtn.setBackground(new Color(0, 100, 0));
+        }
+        rollDiceBtn.setEnabled(b);
+    }
 }

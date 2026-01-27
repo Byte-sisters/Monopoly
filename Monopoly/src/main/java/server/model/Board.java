@@ -1,5 +1,6 @@
 package server.model;
 
+import server.datastructure.MyHashTable;
 import server.datastructure.MyLinkedList;
 import server.datastructure.MyLinkedList.MoveResult;
 
@@ -14,6 +15,7 @@ public class Board {
         this.totalTiles = 0;
         initializeBoard();
     }
+
     private void initializeBoard() {
         tiles.add(new Tile (1,"GO", TileType.GO,null));
         tiles.add(new Tile (2,"mediterranean avenue", TileType.PROPERTY,1));
@@ -35,7 +37,7 @@ public class Board {
         tiles.add(new Tile (18,"community chest", TileType.CARD,CardType.COMMUNITY));
         tiles.add(new Tile (19,"tennessee avenue", TileType.PROPERTY,12));
         tiles.add(new Tile (20,"NYC avenue", TileType.PROPERTY,13));
-        tiles.add(new Tile (21,"chance", TileType.CARD, CardType.CHANCE)); //this is not complete
+        tiles.add(new Tile (21,"chance", TileType.CARD, CardType.CHANCE));
         tiles.add(new Tile (22,"kentucky avenue", TileType.PROPERTY,14));
         tiles.add(new Tile (23,"chance", TileType.CARD, CardType.CHANCE));
         tiles.add(new Tile (24,"indiana avenue", TileType.PROPERTY,15));
@@ -45,7 +47,7 @@ public class Board {
         tiles.add(new Tile (28,"ventnor avenue", TileType.PROPERTY,19));
         tiles.add(new Tile (29,"income tax", TileType.TAX, 125));
         tiles.add(new Tile (30,"marvin gardens", TileType.PROPERTY,20));
-        tiles.add(new Tile (31,"go to jail", TileType.JAIL, JailStatus.GO_TO_JAIL)); // this is not complete
+        tiles.add(new Tile (31,"go to jail", TileType.JAIL, JailStatus.GO_TO_JAIL));
         tiles.add(new Tile (32,"pacific avenue", TileType.PROPERTY,21));
         tiles.add(new Tile (33,"north carolina avenue", TileType.PROPERTY,22));
         tiles.add(new Tile (34,"community chest", TileType.CARD, CardType.COMMUNITY));
@@ -56,36 +58,7 @@ public class Board {
         tiles.add(new Tile (39,"income tax", TileType.TAX, 100));
         tiles.add(new Tile (40,"boardwalk", TileType.PROPERTY, 26));
         totalTiles = tiles.size();
-    }/////
-/*
-    //maybe it should return MoveResult????
-    public void movePlayer(int currentPosition, int steps) {
-        Tile startNode = tiles.getTileAtPosition(currentPosition);
-        MoveResult result = tiles.move(startNode, steps);
-        if(result.hasPassedGO()){
-            // give money to player
-        }
     }
-
-*/
-//    public Tile getTileAtPosition(int position) {
-//        MyLinkedList.Node node = getNodeAtPosition(position);
-//        return node != null ? node.getTile() : null;
-//    }
-//
-//
-//    private MyLinkedList.Node getNodeAtPosition(int position) {
-//        if (tiles.getHeadNode() == null || position < 0) {
-//            return null;
-//        }
-//
-//        MyLinkedList.Node current = tiles.getHeadNode();
-//        for (int i = 0; i < position; i++) {
-//            current = current.getNext();
-//        }
-//        return current;
-//    }
-
 
     public int getTotalTiles() {
         return totalTiles;

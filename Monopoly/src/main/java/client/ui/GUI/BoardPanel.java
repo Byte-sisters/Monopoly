@@ -10,6 +10,7 @@ import server.model.TileType;
 
 public class BoardPanel extends JPanel {
     private SquareTile[] guiTiles = new SquareTile[40];
+    private int selectedPropertyId = -1;
 
     public BoardPanel(Board board) {
         this.setLayout(new GridLayout(11, 11));
@@ -24,14 +25,46 @@ public class BoardPanel extends JPanel {
             String colorGroup = getGroupColor(i);
 
             if (t.getType() == TileType.PROPERTY) {
-                price = "ID: " + t.getId();
+                price = "ID: " + t.getData();
             }
 
             guiTiles[i] = new SquareTile(name, price, typeStr, colorGroup);
+            final int tileIndex = i;
+
+            guiTiles[i].addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+
+                    Tile tile = board.getAllTiles().getTileAtPosition(tileIndex);
+
+                    if (tile.getType() == TileType.PROPERTY) {
+
+                        selectedPropertyId = (int) tile.getData();
+
+                        highlightSelectedTile(tileIndex);
+                    }
+                }
+            });
+
         }
 
         assembleGrid();
     }
+    private void highlightSelectedTile(int tileIndex) {
+        for (int i = 0; i < guiTiles.length; i++) {
+            if (i == tileIndex) {
+                guiTiles[i].setBorder(
+                        BorderFactory.createLineBorder(Color.RED, 3)
+                );
+            } else {
+                guiTiles[i].setBorder(
+                        BorderFactory.createLineBorder(Color.BLACK, 1)
+                );
+            }
+        }
+        repaint();
+    }
+
 
     private void assembleGrid() {
         Component[][] grid = new Component[11][11];
@@ -99,35 +132,6 @@ public class BoardPanel extends JPanel {
         Color[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.ORANGE};
         return colors[id % colors.length];
     }
-        public static void main(String[] args) {
-            Board board = new Board();
-
-            Player[] testPlayers = new Player[4];
-            testPlayers[0] = new Player(0, "Player 1", 1500);
-            testPlayers[1] = new Player(1, "Player 2", 1500);
-            testPlayers[2] = new Player(2, "Player 3", 1500);
-            testPlayers[3] = new Player(3, "Player 4", 1500);
-            testPlayers[0].moveTo(0);
-            testPlayers[1].moveTo(10);
-            testPlayers[2].moveTo(20);
-            testPlayers[3].moveTo(39);
-
-            JFrame frame = new JFrame("Monopoly Board Test");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setLayout(new BorderLayout());
-
-            BoardPanel boardPanel = new BoardPanel(board);
-
-            frame.add(boardPanel, BorderLayout.CENTER);
-
-            boardPanel.updateTokens(testPlayers);
-
-            frame.setSize(900, 900);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-
-            System.out.println("Board UI initialized successfully.");
-        }
     public void clearAllTokens() {
         for (SquareTile tile : guiTiles) {
             if (tile != null) {
@@ -143,6 +147,10 @@ public class BoardPanel extends JPanel {
         }
         revalidate();
         repaint();
+    }
+
+    public int getSelectedPropertyId() {
+        return selectedPropertyId;
     }
 }
 

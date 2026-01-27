@@ -13,10 +13,10 @@ public class PlayersDisplayPanel extends JPanel {
         setBorder(BorderFactory.createTitledBorder("Players"));
 
         Color[] colors = {
-                new Color(255, 200, 200),
-                new Color(200, 200, 255),
-                new Color(200, 255, 200),
-                new Color(255, 255, 200),
+                new Color(0, 149, 255),
+                new Color(39, 241, 10),
+                new Color(255, 46, 206),
+                new Color(255, 245, 0),
         };
 
         for (int i = 0; i < 4; i++) {
@@ -44,4 +44,13 @@ public class PlayersDisplayPanel extends JPanel {
             players[i].setMyTurn(false);
         }
     }
+    public String getPlayerStatus(int playerId) {
+        if (playerId <= 0 || playerId > players.length) return "UNKNOWN";
+
+        PlayerInfoPanel panel = players[playerId - 1];
+        if (panel == null) return "UNKNOWN";
+
+        return panel.getStatus();
+    }
+
 }

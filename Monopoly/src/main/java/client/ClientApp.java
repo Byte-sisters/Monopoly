@@ -17,7 +17,18 @@ public class ClientApp {
     public void start() {
         try {
             network = new ClientSocketManager("localhost", 5000);
-            send(new Message(MessageType.HELLO, ""));
+            String playerName = JOptionPane.showInputDialog(
+                    null,
+                    "Enter your player name:",
+                    "Player Name",
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (playerName == null || playerName.trim().isEmpty()) {
+                playerName = "Player";
+            }
+
+            send(new Message(MessageType.HELLO, playerName.trim()));
             new Thread(this::listenToServer).start();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
@@ -28,7 +39,6 @@ public class ClientApp {
             );
         }
     }
-
 
     private void listenToServer() {
         try {
@@ -122,35 +132,35 @@ public class ClientApp {
                 .updateRentKing(rentKing[0], Integer.parseInt(rentKing[1]));
     }
 
-
     private void handleIncomingTrade(String data) {
         DealViewModel deal = parseDeal(data);
-        showDealDialog(deal);
+
+        if (deal.isIncoming) {
+            showDealDialog(deal);
+        }
     }
 
     private DealViewModel parseDeal(String data) {
+        String[] parts = data.split(",");
 
-        String[] parts = data.split("\\|");
+        if (parts.length < 5) {
+            System.err.println("Trade data incomplete: " + data);
+            return null;
+        }
 
         DealViewModel deal = new DealViewModel(5);
-        deal.proposerId = Integer.parseInt(parts[0]);
-        deal.isIncoming = true;
-
-        if (!parts[1].isEmpty()) {
-            String[] offered = parts[1].split(",");
-            for (String p : offered)
-                deal.offeredProperties[deal.offeredPropertiesCount++] = p;
+        deal.proposerId = Integer.parseInt(parts[0].trim());
+        int targetId = Integer.parseInt(parts[1].trim());
+        deal.isIncoming = (targetId == myPlayerId);
+        if (!parts[2].trim().isEmpty()) {
+            deal.offeredProperties[deal.offeredPropertiesCount++] = parts[2].trim();
         }
-
-        deal.offeredMoney = Integer.parseInt(parts[2]);
-
-        if (!parts[3].isEmpty()) {
-            String[] requested = parts[3].split(",");
-            for (String p : requested)
-                deal.requestedProperties[deal.requestedPropertiesCount++] = p;
+        if (!parts[3].trim().isEmpty()) {
+            deal.requestedProperties[deal.requestedPropertiesCount++] = parts[3].trim();
         }
+        deal.offeredMoney = Integer.parseInt(parts[4].trim());
+        deal.requestedMoney = 0;
 
-        deal.requestedMoney = Integer.parseInt(parts[4]);
         return deal;
     }
 

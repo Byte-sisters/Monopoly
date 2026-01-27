@@ -15,6 +15,7 @@ public class Player {
     private MyHashTable<Property> ownedProperties;
     private MyStack undoStack;
     private MyStack redoStack;
+    boolean hasRolledThisTurn;
 
     public Player(int playerID, String name, int initialBalance) {
         this.playerID = playerID;
@@ -23,10 +24,23 @@ public class Player {
         this.currentPosition = 0;
         this.status = PlayerStatus.ACTIVE;
         this.jailTurns = 0;
+        this.hasRolledThisTurn = false;
 
         this.ownedProperties = new MyHashTable<>(20);
         this.undoStack = new MyStack();
         this.redoStack = new MyStack();
+    }
+
+    public boolean hasRolledThisTurn() {
+        return hasRolledThisTurn;
+    }
+
+    public void setHasRolledThisTurn(boolean hasRolledThisTurn) {
+        this.hasRolledThisTurn = hasRolledThisTurn;
+    }
+
+    public void addRentIncome(int amount) {
+        this.rentIncome += amount;
     }
 
     public void addMoney(int amount) {
@@ -47,12 +61,17 @@ public class Player {
     public void sendToJail() {
         this.status = PlayerStatus.IN_JAIL;
         this.jailTurns = 0;
+        this.currentPosition=10;
     }
 
     public void incrementJailTurn() {
         if (status == PlayerStatus.IN_JAIL) {
             jailTurns++;
         }
+    }
+
+    public void subtractRentIncome(int amount) {
+        this.rentIncome -= amount;
     }
 
     public void releaseFromJail() {
@@ -141,6 +160,14 @@ public class Player {
 
     public int getOwnedPropertiesCount() {
         return ownedProperties.size();
+    }
+
+    public int getPropertiesCount() {
+        return ownedProperties.size();
+    }
+
+    public void setStatus(PlayerStatus playerStatus) {
+        this.status = playerStatus;
     }
 }
 

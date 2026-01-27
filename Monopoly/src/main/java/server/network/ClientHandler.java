@@ -28,13 +28,13 @@ public class ClientHandler implements Runnable {
             out = new ObjectOutputStream(socket.getOutputStream());
             out.flush();
             in = new ObjectInputStream(socket.getInputStream());
-
-            while (running) {
+            while(running) {
                 Message msg = (Message) in.readObject();
                 gameServer.handleMessage(this, msg);
             }
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             System.out.println("Client disconnected (Player " + playerId + ")");
         } finally {
             close();

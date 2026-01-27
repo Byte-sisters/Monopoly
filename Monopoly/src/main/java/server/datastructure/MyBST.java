@@ -76,7 +76,7 @@ public class MyBST {
         return T;
     }
 
-   // inorder traverse is not complete
+    // inorder traverse is not complete
     public void inorder() {
         inorderRecursive(root);
     }

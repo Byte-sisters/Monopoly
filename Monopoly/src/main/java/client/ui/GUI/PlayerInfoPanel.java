@@ -68,17 +68,17 @@ public class PlayerInfoPanel extends JPanel {
             int position,
             int assetsCount
     ) {
-        nameLabel.setText("  " + playerName + "  ");
-        balanceLabel.setText("💰: " + balance);
-        statusLabel.setText("🎭: " + status);
-        positionLabel.setText("📍: " + position);
-        assetsCountLabel.setText("🏠: " + assetsCount + " ملک");
+        nameLabel.setText("NAME: " + playerName + "  ");
+        balanceLabel.setText("BALANCE: " + balance);
+        statusLabel.setText("STATUS: " + status);
+        positionLabel.setText("POSITION: " + position);
+        assetsCountLabel.setText("ASSETS: " + assetsCount + "  ");
 
-        if (status.contains("فعال")) {
+        if (status.contains("ACTIVE")) {
             statusLabel.setForeground(Color.GREEN.darker());
-        } else if (status.contains("زندان")) {
+        } else if (status.contains("IN_JAIL")) {
             statusLabel.setForeground(Color.ORANGE.darker());
-        } else if (status.contains("ورشکسته")) {
+        } else if (status.contains("BANKRUPT")) {
             statusLabel.setForeground(Color.RED.darker());
         } else {
             statusLabel.setForeground(Color.BLACK);
@@ -96,4 +96,9 @@ public class PlayerInfoPanel extends JPanel {
     public int getPlayerID() {
         return playerID;
     }
+
+    public String getStatus() {
+        return statusLabel.getText().replace("STATUS: ", "").trim();
+    }
+
 }
